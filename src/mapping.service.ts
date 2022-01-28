@@ -1,42 +1,42 @@
 import { Client } from '@opensearch-project/opensearch';
-import { EntityArgs } from './entity.decorator';
-import { FieldArgs } from './field.decorator';
-import { Mapping, MappingProperty, InternalMapping, InternalMappingProperty } from './mapping';
+import { OpenSearchEntityArgs } from './entity.decorator';
+import { OpenSearchFieldArgs } from './field.decorator';
+import { OpenSearchMapping, OpenSearchMappingProperty, InternalOpenSearchMapping, InternalOpenSearchMappingProperty } from './mapping';
 
 /**
  * Service used to manage mapping loading and share it
  */
-export class MappingService {
-  static instance: MappingService;
+export class OpenSearchMappingService {
+  static instance: OpenSearchMappingService;
 
-  mappings: Map<string, InternalMapping> = new Map();
-
-  constructor() {}
+  osmappings: Map<string, InternalOpenSearchMapping> = new Map();
 
   /**
    * Get the singleton instance
    */
-  static getInstance(): MappingService {
-    if (!MappingService.instance) {
-      const mappingService = new MappingService();
-      MappingService.instance = mappingService;
+  static getInstance(): OpenSearchMappingService {
+    if (!OpenSearchMappingService.instance) {
+      OpenSearchMappingService.instance = new OpenSearchMappingService();
     }
-    return MappingService.instance;
+    return OpenSearchMappingService.instance;
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  private constructor() {}
 
   /**
    * Add the entity in the mapping
    * @param args decorator args
    * @param target class
    */
-  addEntity(args: EntityArgs, target: any, superClass: any): void {
+  addEntity(args: OpenSearchEntityArgs, target: any, superClass: any): void {
     const className = target.name;
-    const mapping = this.mappings.get(className);
+    const mapping = this.osmappings.get(className);
 
     const mergeProperties = (properties) => {
       for (const propertyName of Object.keys(properties)) {
         const currentMappingProperty = mapping.properties.get(propertyName);
-        let internalProperty: InternalMappingProperty = null;
+        let internalProperty: InternalOpenSearchMappingProperty = null;
         if (!currentMappingProperty) {
           internalProperty = {
             propertyMapping: properties[propertyName],
@@ -54,23 +54,22 @@ export class MappingService {
     };
 
     if (superClass) {
-      const superClassMapping = this.mappings.get(superClass);
+      const superClassMapping = this.osmappings.get(superClass);
       if (superClassMapping) {
-        mergeProperties(superClassMapping.mapping.body.properties);
+        mergeProperties(superClassMapping.osmapping.body.properties);
       }
     }
 
     if (args) {
-      mapping.mapping.index = args.index;
-      mapping.mapping.type = args.type as any;
-      mapping.mapping.dynamic = args.dynamic;
+      mapping.osmapping.index = args.index;
+      mapping.osmapping.dynamic = args.dynamic;
       mapping.readonly = args.readonly === true;
 
       if (args.mixins) {
         for (const mixin of args.mixins) {
-          const Entity = this.mappings.get(mixin.name);
-          if (Entity) {
-            mergeProperties(Entity.mapping.body.properties);
+          const OpenSearchEntity = this.osmappings.get(mixin.name);
+          if (OpenSearchEntity) {
+            mergeProperties(OpenSearchEntity.osmapping.body.properties);
           }
         }
       }
@@ -83,24 +82,24 @@ export class MappingService {
    * @param target class
    * @param propertyKey the property
    */
-  addField(args: FieldArgs, target: any, propertyKey: string | symbol, propertyType?: any): void {
+  addField(args: OpenSearchFieldArgs, target: any, propertyKey: string | symbol, propertyType?: any): void {
     const className = target.constructor.name;
-    let mapping = this.mappings.get(className);
+    let mapping = this.osmappings.get(className);
     if (!mapping) {
-      mapping = new InternalMapping();
-      this.mappings.set(className, mapping);
+      mapping = new InternalOpenSearchMapping();
+      this.osmappings.set(className, mapping);
     }
 
-    const properties: MappingProperty = args;
+    const properties: OpenSearchMappingProperty = args;
     if (args.type === 'nested' || args.type === 'object') {
       properties.type = args.type;
-      const Entity = this.mappings.get(propertyType.name);
-      if (Entity) {
-        properties.properties = Entity.mapping.body.properties;
+      const OpenSearchEntity = this.osmappings.get(propertyType.name);
+      if (OpenSearchEntity) {
+        properties.properties = OpenSearchEntity.osmapping.body.properties;
       }
     }
 
-    const internalProperty: InternalMappingProperty = {
+    const internalProperty: InternalOpenSearchMappingProperty = {
       propertyMapping: properties,
     };
 
@@ -109,61 +108,49 @@ export class MappingService {
   }
 
   /**
-   * Alllow you to get the generated mapping list ready to be inserted inside elasticsearch
+   * Allow you to get the generated mapping list ready to be inserted inside elasticsearch
    */
-  public getInternalMappings(): InternalMapping[] {
-    return Array.from(this.mappings.values());
+  public getMappings(): InternalOpenSearchMapping[] {
+    return Array.from(this.osmappings.values());
   }
 
   /**
    * Allow you to get all index
    */
-  public getMappings(): Mapping[] {
-    return Array.from(this.mappings.values()).map((mapping) => mapping.mapping);
+  public getOpenSearchMappings(): OpenSearchMapping[] {
+    return Array.from(this.osmappings.values()).map((mapping) => mapping.osmapping);
   }
 
   /**
    * Allow you to get the generate mapping map
    */
   public getMappingsMap() {
-    return this.mappings;
+    return this.osmappings;
   }
 
   /**
-   * Alllow you to get the generated mapping ready to be inserted inside elasticsearch
+   * Allow you to get the generated mapping ready to be inserted inside elasticsearch
    * for a class name
    */
-  public getMappingForClass(className: string): Mapping {
-    const internalMapping = this.mappings.get(className);
-
+  public getMappingForClass(className: string): OpenSearchMapping {
+    const internalMapping = this.osmappings.get(className);
     if (internalMapping) {
-      return internalMapping.mapping;
+      return internalMapping.osmapping;
     }
     return null;
   }
 
   /**
-   * Alllow you to get the generated mapping  ready to be inserted inside elasticsearch
+   * Allow you to get the generated mapping ready to be inserted inside elasticsearch
    * for an index name
    */
-  public getMappingForIndex(indexName: string): Mapping {
-    const internalMapping = Array.from(this.mappings.values()).find((internalMapping) => internalMapping.mapping.index === indexName);
+  public getMappingForIndex(indexName: string): OpenSearchMapping {
+    const internalMapping = Array.from(this.getMappings().values()).find(
+      (internalOpenSearchMapping) => internalOpenSearchMapping.osmapping.index === indexName
+    );
 
     if (internalMapping) {
-      return internalMapping.mapping;
-    }
-    return null;
-  }
-
-  /**
-   * Alllow you to get the generated mapping  ready to be inserted inside elasticsearch
-   * for an type
-   */
-  public getMappingForType(type: string): Mapping {
-    const internalMapping = Array.from(this.mappings.values()).find((internalMapping) => internalMapping.mapping.type === type);
-
-    if (internalMapping) {
-      return internalMapping.mapping;
+      return internalMapping.osmapping;
     }
     return null;
   }
@@ -173,35 +160,39 @@ export class MappingService {
    */
   public getAllIndex(): string[] {
     // load mapping with index
-    const mappings = Array.from(this.mappings.values()).filter((mapping) => mapping.mapping.index);
-    return mappings.map((mapping) => mapping.mapping.index);
+    const mappings = Array.from(this.osmappings.values()).filter((mapping) => mapping.osmapping.index);
+    return mappings.map((mapping) => mapping.osmapping.index);
   }
 
   /**
    * Allow to insert/update mapping into elasticsearch
    */
-  public async uploadMappings(esclient: Client) {
-    const mappings = MappingService.getInstance().getInternalMappings();
+  public async uploadMappings(client: Client) {
+    const mappings = OpenSearchMappingService.getInstance().getMappings();
 
     await Promise.all(
       mappings.map(async (internalMapping) => {
         if (!internalMapping.readonly) {
-          const mapping = internalMapping.mapping;
+          const openSearchMapping = internalMapping.osmapping;
 
-          if (mapping.index) {
-            mapping.include_type_name = true;
-            // Delete readonly for ES compatibility
-            delete internalMapping.readonly;
+          // delete type for indices
+          if (openSearchMapping.index) {
+            delete openSearchMapping.type;
+          }
+          // delete readonly
+          delete internalMapping.readonly;
 
-            const indexExist = await esclient.indices.exists({ index: mapping.index });
+          if (openSearchMapping.index) {
+            const indexExist = await client.indices.exists({ index: openSearchMapping.index });
             if (!indexExist.body) {
               // create index
-              await esclient.indices.create({ index: mapping.index });
+              await client.indices.create({ index: openSearchMapping.index });
               // create mapping
-              await esclient.indices.putMapping(mapping);
+              console.log('putting mapping', openSearchMapping.index, openSearchMapping);
+              await client.indices.putMapping(openSearchMapping);
             } else {
               // update mapping
-              await esclient.indices.putMapping(mapping);
+              await client.indices.putMapping(openSearchMapping);
             }
           }
         }

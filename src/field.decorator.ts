@@ -1,10 +1,10 @@
 import 'reflect-metadata';
-import { MappingService } from './mapping.service';
+import { OpenSearchMappingService } from './mapping.service';
 
 /**
  * Argument for a simple elasticsearch field
  */
-export class FieldArgs {
+export class OpenSearchFieldArgs {
   /** Type of the field : "text" | "integer" | */
   type?: string;
   /** Name of the field : if it need to be different of the property name */
@@ -13,7 +13,7 @@ export class FieldArgs {
   dynamic?: string | boolean;
   /** Analyzer type */
   analyzer?: string;
-  /** Additionnal ES fields */
+  /** Additional fields */
   fields?: any;
   /** Format */
   format?: any;
@@ -32,10 +32,10 @@ export class FieldArgs {
 }
 
 /**
- * @Field decorator : registrer the field in the mapping through the MappingService
+ * @OpenSearchField decorator : register the field in the mapping through the OpenSearchMappingService
  * @param args decorator annotation
  */
-export function Field(args: FieldArgs): PropertyDecorator {
+export function OpenSearchField(args: OpenSearchFieldArgs): PropertyDecorator {
   return (target: any, propertyKey: string | symbol) => {
     let propertyType = Reflect.getMetadata('design:type', target, propertyKey);
     if (args.type === 'join' && !args.relations) {
@@ -64,6 +64,6 @@ export function Field(args: FieldArgs): PropertyDecorator {
 
     delete args.fieldClass;
 
-    MappingService.getInstance().addField(args, target, propertyKey, propertyType);
+    OpenSearchMappingService.getInstance().addField(args, target, propertyKey, propertyType);
   };
 }

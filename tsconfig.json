@@ -12,6 +12,7 @@
     "sourceMap": true,
     "target": "ES2020",
     "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "resolveJsonModule": true
   },
   "include": ["src", "tests"]

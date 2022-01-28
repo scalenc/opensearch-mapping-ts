@@ -3,11 +3,10 @@ import { cloneDeep } from 'lodash';
 /**
  * Base format of an elasticsearch mapping
  */
-export class Mapping {
+export class OpenSearchMapping {
   index: string;
   type: string;
-  include_type_name: boolean;
-  dynamic: string | boolean;
+  dynamic: boolean | 'strict' | 'runtime';
   body: { properties: any };
 
   constructor() {
@@ -18,29 +17,29 @@ export class Mapping {
 /**
  * Internal mapping to handle specific parameter
  */
-export class InternalMapping {
+export class InternalOpenSearchMapping {
   index: string;
   type: string;
   readonly: boolean;
-  mapping: Mapping = new Mapping();
-  properties: Map<string | symbol, InternalMappingProperty> = new Map();
+  osmapping: OpenSearchMapping = new OpenSearchMapping();
+  properties: Map<string | symbol, InternalOpenSearchMappingProperty> = new Map();
 
-  addProperty(name: string | symbol, mapping: InternalMappingProperty): void {
+  addProperty(name: string | symbol, mapping: InternalOpenSearchMappingProperty): void {
     this.properties.set(name, mapping);
 
     const propertyMapping = cloneDeep(mapping.propertyMapping);
 
-    // remove the name field from the es-mapping
+    // delete name
     delete (propertyMapping as any).name;
 
-    this.mapping.body.properties[name] = propertyMapping;
+    this.osmapping.body.properties[name] = propertyMapping;
   }
 }
 
 /**
  * Base format of an elasticsearch property
  */
-export interface MappingProperty {
+export interface OpenSearchMappingProperty {
   type?: string;
   analyzer?: string;
   properties?: any;
@@ -50,16 +49,16 @@ export interface MappingProperty {
 /**
  * Base format of an elasticsearch property
  */
-export interface InternalMappingProperty extends MappingProperty {
-  propertyMapping: MappingProperty;
-  transformers?: MappingPropertyTranformer[];
+export interface InternalOpenSearchMappingProperty extends OpenSearchMappingProperty {
+  propertyMapping: OpenSearchMappingProperty;
+  transformers?: OpenSearchMappingPropertyTransformer[];
 }
 
-export interface MappingPropertyTranformer {
+export interface OpenSearchMappingPropertyTransformer {
   fieldName: string;
-  transformer: EsPropertyTranformer;
+  transformer: OpenSearchPropertyTransformer;
 }
 
-export interface EsPropertyTranformer {
+export interface OpenSearchPropertyTransformer {
   transform(input: any);
 }
