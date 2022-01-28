@@ -1,8 +1,7 @@
-import { Entity, Field } from '../../lib/es-mapping-ts';
+import { Entity, Field } from '../src';
 
 @Entity()
 export class WrongRelationEntity {
-
   @Field({
     type: 'join',
   })

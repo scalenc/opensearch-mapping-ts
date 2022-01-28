@@ -1,4 +1,4 @@
-import { Entity, Field } from '../../lib/es-mapping-ts';
+import { Entity, Field } from '../src';
 import { NestedEntity } from './nested.entity';
 import { ObjectEntity } from './object.entity';
 
@@ -7,7 +7,6 @@ import { ObjectEntity } from './object.entity';
   type: 'masterType',
 })
 export class MasterEntity {
-
   @Field({
     type: 'text',
   })
@@ -15,13 +14,13 @@ export class MasterEntity {
 
   @Field({
     type: 'text',
-    copy_to : 'name',
+    copy_to: 'name',
   })
   firstname: string;
 
   @Field({
     type: 'text',
-    copy_to : 'name',
+    copy_to: 'name',
   })
   lastname: string;
 
@@ -50,13 +49,13 @@ export class MasterEntity {
   @Field({
     type: 'nested',
     fieldClass: NestedEntity,
-    dynamic : 'strict',
+    dynamic: 'strict',
   })
   nesteds: NestedEntity[];
 
   @Field({
     type: 'nested',
-    dynamic : 'strict',
+    dynamic: 'strict',
   })
   nestedWarnings: NestedEntity[];
 }

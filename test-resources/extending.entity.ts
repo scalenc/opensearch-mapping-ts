@@ -1,4 +1,4 @@
-import { Entity, Field } from '../../lib/es-mapping-ts';
+import { Entity, Field } from '../src';
 import { MasterEntity } from './master.entity';
 
 @Entity({
@@ -6,10 +6,8 @@ import { MasterEntity } from './master.entity';
   type: 'typeExtending',
 })
 export class ExtendingEntity extends MasterEntity {
-
   @Field({
     type: 'text',
   })
   extendend?: string;
-
 }

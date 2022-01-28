@@ -1,4 +1,4 @@
-import { Entity, Field } from '../../lib/es-mapping-ts';
+import { Entity, Field } from '../src';
 import { AbstractEntity } from './abstract.entity';
 
 @Entity({
@@ -6,7 +6,6 @@ import { AbstractEntity } from './abstract.entity';
   type: 'typeActual',
 })
 export class ActualEntity extends AbstractEntity {
-
   @Field({
     type: 'text',
   })
@@ -14,7 +13,7 @@ export class ActualEntity extends AbstractEntity {
 
   @Field({
     type: 'text',
-    null_value : 'undefined',
+    null_value: 'undefined',
   })
   overridableName: string;
 }

@@ -1,10 +1,9 @@
-import { Entity, Field } from '../../lib/es-mapping-ts';
+import { Entity, Field } from '../src';
 
 @Entity({
   index: 'nested',
 })
 export class NestedEntity {
-
   @Field({
     type: 'text',
   })

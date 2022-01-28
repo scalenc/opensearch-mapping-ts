@@ -37,7 +37,6 @@ export class FieldArgs {
  */
 export function Field(args: FieldArgs): PropertyDecorator {
   return (target: any, propertyKey: string | symbol) => {
-
     let propertyType = Reflect.getMetadata('design:type', target, propertyKey);
     if (args.type === 'join' && !args.relations) {
       throw new Error(`es-mapping-error no relations defined for join datatype : ${target.constructor.name}:${propertyKey as string}`);

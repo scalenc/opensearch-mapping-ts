@@ -1,8 +1,6 @@
-import { Field } from '../../lib/es-mapping-ts';
-
+import { Field } from '../src';
 
 export class AbstractEntity {
-
   @Field({
     type: 'text',
   })
@@ -12,5 +10,4 @@ export class AbstractEntity {
     type: 'text',
   })
   overridableName: string;
-
 }

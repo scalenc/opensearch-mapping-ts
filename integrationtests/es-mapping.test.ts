@@ -1,15 +1,15 @@
 import { Client } from '@opensearch-project/opensearch';
+import { expect } from 'chai';
 import 'reflect-metadata';
-import { MappingService } from '../lib/es-mapping-ts';
-import './resources/master.entity';
+import { MappingService } from '../src';
+import '../test-resources/master.entity';
 
-describe('es-mapping e2e:test', () => {
+describe('es-mapping e2e:test', function () {
+  this.timeout(30000);
 
   it('should upload the mapping', async () => {
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000;
-
     const mappings = MappingService.getInstance().getMappingForIndex('master');
-    expect(mappings).toBeDefined();
+    expect(mappings).not.to.be.undefined;
 
     const client = new Client({
       node: 'http://localhost:9200',
@@ -17,21 +17,23 @@ describe('es-mapping e2e:test', () => {
 
     await client.ping();
 
-    await Promise.all(MappingService.getInstance().getAllIndex().map(async (index) => {
-      const indexExist = await client.indices.exists({ index });
-      if (indexExist.body) {
-        await client.indices.delete({ index });
-      }
-    }));
+    await Promise.all(
+      MappingService.getInstance()
+        .getAllIndex()
+        .map(async (index) => {
+          const indexExist = await client.indices.exists({ index });
+          if (indexExist.body) {
+            await client.indices.delete({ index });
+          }
+        })
+    );
 
     await MappingService.getInstance().uploadMappings(client);
   });
 
   it('should re-upload the mapping', async () => {
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000;
-
     const mappings = MappingService.getInstance().getMappingForIndex('master');
-    expect(mappings).toBeDefined();
+    expect(mappings).not.to.be.undefined;
 
     const client = new Client({
       node: 'http://localhost:9200',
@@ -49,10 +51,9 @@ describe('es-mapping e2e:test', () => {
     });
     try {
       await MappingService.getInstance().uploadMappings(client);
-      expect(true).toBeFalsy();
+      expect(true).to.be.false;
     } catch (err) {
-      expect(err).toBeDefined();
+      expect(err).not.to.be.undefined;
     }
   });
-
 });

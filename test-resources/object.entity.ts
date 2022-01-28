@@ -1,11 +1,10 @@
-import { Entity, Field } from '../../lib/es-mapping-ts';
+import { Entity, Field } from '../src';
 
 @Entity()
 export class ObjectEntity {
-
   @Field({
     type: 'text',
-    analyzer : 'whitespace',
+    analyzer: 'whitespace',
   })
   name: string;
 

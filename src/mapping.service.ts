@@ -7,12 +7,11 @@ import { Mapping, MappingProperty, InternalMapping, InternalMappingProperty } fr
  * Service used to manage mapping loading and share it
  */
 export class MappingService {
-
   static instance: MappingService;
 
   mappings: Map<string, InternalMapping> = new Map();
 
-  constructor() { }
+  constructor() {}
 
   /**
    * Get the singleton instance
@@ -148,8 +147,7 @@ export class MappingService {
    * for an index name
    */
   public getMappingForIndex(indexName: string): Mapping {
-    const internalMapping = Array.from(this.mappings.values())
-      .find((internalMapping) => internalMapping.mapping.index === indexName);
+    const internalMapping = Array.from(this.mappings.values()).find((internalMapping) => internalMapping.mapping.index === indexName);
 
     if (internalMapping) {
       return internalMapping.mapping;
@@ -162,8 +160,7 @@ export class MappingService {
    * for an type
    */
   public getMappingForType(type: string): Mapping {
-    const internalMapping = Array.from(this.mappings.values())
-      .find((internalMapping) => internalMapping.mapping.type === type);
+    const internalMapping = Array.from(this.mappings.values()).find((internalMapping) => internalMapping.mapping.type === type);
 
     if (internalMapping) {
       return internalMapping.mapping;
@@ -186,27 +183,29 @@ export class MappingService {
   public async uploadMappings(esclient: Client) {
     const mappings = MappingService.getInstance().getInternalMappings();
 
-    await Promise.all(mappings.map(async (internalMapping) => {
-      if (!internalMapping.readonly) {
-        const mapping = internalMapping.mapping;
+    await Promise.all(
+      mappings.map(async (internalMapping) => {
+        if (!internalMapping.readonly) {
+          const mapping = internalMapping.mapping;
 
-        if (mapping.index) {
-          mapping.include_type_name = true;
-          // Delete readonly for ES compatibility
-          delete internalMapping.readonly;
+          if (mapping.index) {
+            mapping.include_type_name = true;
+            // Delete readonly for ES compatibility
+            delete internalMapping.readonly;
 
-          const indexExist = await esclient.indices.exists({ index: mapping.index });
-          if (!indexExist.body) {
-            // create index
-            await esclient.indices.create({ index: mapping.index });
-            // create mapping
-            await esclient.indices.putMapping(mapping);
-          } else {
-            // update mapping
-            await esclient.indices.putMapping(mapping);
+            const indexExist = await esclient.indices.exists({ index: mapping.index });
+            if (!indexExist.body) {
+              // create index
+              await esclient.indices.create({ index: mapping.index });
+              // create mapping
+              await esclient.indices.putMapping(mapping);
+            } else {
+              // update mapping
+              await esclient.indices.putMapping(mapping);
+            }
           }
         }
-      }
-    }));
+      })
+    );
   }
 }

@@ -1,61 +1,81 @@
 {
-  "name": "es-mapping-ts",
-  "version": "1.0.1",
-  "description": "Eleasticsearch mapping manager typescript",
+  "name": "opensearch-mapping-ts",
+  "version": "1.0.0",
+  "description": "Generate OpenSearch mappings from typescript decorators",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "tsc -p tsconfig.json",
-    "lint": "tslint --project tsconfig.json",
-    "lint:fix": "tslint --project tsconfig.json --fix",
-    "test": "node_modules/.bin/jest --colors --no-cache --config=./jest.config.js --runInBand --coverage",
-    "coveralls": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
+    "prepare": "husky install",
+    "lint": "eslint .",
+    "build": "tsc",
+    "test": "mocha",
+    "test:local": "DOCKER=$(which docker || which podman)  && ($DOCKER stop identity-opensearch; $DOCKER rm identity-opensearch; $DOCKER run --name identity-opensearch -p 9242:9200 -e discovery.type=single-node -e plugins.security.disabled=true -d opensearchproject/opensearch:1.2.4 && mocha)",
+    "test:local:nodb": "HAVE_ES_TEST_INSTANCE=false mocha",
+    "test:integration": "mocha --exclude 'tests/**/*.ts' 'integrationtests/**/*.ts'",
+    "coverage": "nyc --reporter lcov --reporter text yarn test"
   },
   "dependencies": {
     "lodash.clonedeep": "^4.5.0",
-    "reflect-metadata": "^0.1.12"
+    "reflect-metadata": "^0.1.13"
   },
   "peerDependencies": {
     "@opensearch-project/opensearch": "^1.0.2"
   },
   "devDependencies": {
     "@opensearch-project/opensearch": "^1.0.2",
-    "@types/jest": "^24.0.22",
+    "@types/chai": "^4.3.0",
     "@types/lodash.clonedeep": "^4.5.6",
-    "@types/node": "^10.7.1",
-    "coveralls": "^3.0.2",
-    "cross-env": "^5.1.3",
-    "gulp": "^3.9.1",
-    "gulp-clean": "^0.3.2",
-    "gulp-sourcemaps": "^2.6.1",
-    "gulp-typescript": "^3.2.3",
-    "jest": "^24.9.0",
-    "mocha": "^5.0.1",
-    "nyc": "^11.4.1",
-    "ts-jest": "^24.2.0",
-    "ts-node": "^3.3.0",
-    "tslint": "5.3.2",
-    "typescript": "^3.7.3",
-    "kind-of": "^6.0.3",
-    "lodash": "^4.17.15",
-    "lodash.template": "^4.5.0",
-    "minimatch": "^3.0.4",
-    "minimist": "^1.2.5"
+    "@types/mocha": "^9.1.0",
+    "@types/node": "17.0.13",
+    "@types/sinon": "^10.0.9",
+    "@typescript-eslint/eslint-plugin": "^5.9.0",
+    "@typescript-eslint/parser": "^5.9.0",
+    "chai": "^4.3.6",
+    "commitlint": "^16.1.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint": "^8.7.0",
+    "husky": "^7.0.4",
+    "lint-staged": "^12.3.2",
+    "mocha": "^9.2.0",
+    "nyc": "^15.1.0",
+    "prettier": "^2.5.1",
+    "pretty-quick": "^3.1.3",
+    "typescript": "^4.5.5"
   },
   "keywords": [
     "typescript",
-    "elasticsearch",
+    "opensearch",
     "mapping",
-    "documentation",
     "decorator"
   ],
   "author": {
-    "name": "xrobert35",
-    "email": "xavier.robert972@gmail.com"
+    "name": "scalenc"
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:xrobert35/es-mapping-ts.git"
+    "url": "git@gitlab.com:scalenc/opensource/opensearch-mapping-ts.git"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "mocha": {
+    "diff": true,
+    "extension": [
+      "ts"
+    ],
+    "spec": "tests/**/*.test.ts",
+    "require": "ts-node/register",
+    "watch-files": [
+      "src/**/*.ts",
+      "tests/**/*.ts"
+    ],
+    "watch-ignore": []
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "./node_modules/.bin/eslint"
+    ],
+    "*.{js,jsx,ts,tsx,json,md}": [
+      "./node_modules/.bin/prettier --list-different"
+    ]
+  }
 }

@@ -1,0 +1,62 @@
+# default:
+#   image: node:14
+#   before_script:
+#     - |
+#       {
+#         echo "//gitlab.com/api/v4/packages/npm/:_authToken=\${CI_JOB_TOKEN}"
+#         echo "//gitlab.com/api/v4/projects/:_authToken=\${CI_JOB_TOKEN}"
+#       } | tee -a .npmrc
+#     - cat .npmrc
+
+# stages:
+#   - test
+#   - tag
+#   - deploy-dev
+#   - deploy-prod
+
+# run-tests:
+#   stage: test
+#   except:
+#     - tags
+#   script:
+#     - yarn
+#     - yarn lint
+#     - yarn build
+#     - yarn coverage # includes yarn test
+
+# tag:
+#   stage: tag
+#   only:
+#     - master
+#   script:
+#     - npx semantic-release
+
+# deploy_to_dev:
+#   stage: deploy-dev
+#   only:
+#     - tags
+#   environment:
+#     name: dev
+#     url: https://api.dev.scalenc.com
+#   script:
+#     - 'sed -ie "s/\"version\":[ ]*\"[^\"]*\"/\"version\": \"`git describe --tags | tr -d v`\"/g" package.json'
+#     - yarn global add serverless@2.34 --no-progress
+#     - yarn
+#     - yarn run sync:tf
+#     - yarn run deploy --stage dev --verbose
+
+# deploy_to_prod:
+#   stage: deploy-prod
+#   only:
+#     - tags
+#   when: manual
+#   environment:
+#     name: prod
+#     url: https://api.app.scalenc.com
+#   script:
+#     - 'sed -ie "s/\"version\":[ ]*\"[^\"]*\"/\"version\": \"`git describe --tags | tr -d v`\"/g" package.json'
+#     - yarn global add serverless@2.34 --no-progress
+#     - yarn
+#     - yarn run sync:tf-prod
+#     - yarn run deploy --stage prod --verbose
+#   allow_failure: false
