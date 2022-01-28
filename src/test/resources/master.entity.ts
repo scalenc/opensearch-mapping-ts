@@ -1,60 +1,60 @@
-import { EsEntity, EsField } from '../../lib/es-mapping-ts';
+import { Entity, Field } from '../../lib/es-mapping-ts';
 import { NestedEntity } from './nested.entity';
 import { ObjectEntity } from './object.entity';
 
-@EsEntity({
+@Entity({
   index: 'master',
   type: 'masterType',
 })
 export class MasterEntity {
 
-  @EsField({
+  @Field({
     type: 'text',
   })
   name?: string;
 
-  @EsField({
+  @Field({
     type: 'text',
     copy_to : 'name',
   })
   firstname: string;
 
-  @EsField({
+  @Field({
     type: 'text',
     copy_to : 'name',
   })
   lastname: string;
 
-  @EsField({
+  @Field({
     enabled: false,
     name: 'customName',
   })
   notIndexed: string;
 
-  @EsField({
+  @Field({
     type: 'object',
     fieldClass: ObjectEntity,
   })
   objects: ObjectEntity[];
 
-  @EsField({
+  @Field({
     type: 'object',
   })
   warningObjects: ObjectEntity[];
 
-  @EsField({
+  @Field({
     type: 'object',
   })
   warningObject: ObjectEntity;
 
-  @EsField({
+  @Field({
     type: 'nested',
     fieldClass: NestedEntity,
     dynamic : 'strict',
   })
   nesteds: NestedEntity[];
 
-  @EsField({
+  @Field({
     type: 'nested',
     dynamic : 'strict',
   })

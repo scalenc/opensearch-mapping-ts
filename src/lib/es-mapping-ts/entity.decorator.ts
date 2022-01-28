@@ -1,9 +1,9 @@
-import { EsMappingService } from './es-mapping.service';
+import { MappingService } from './mapping.service';
 
 /**
  * Argument for an elasticsearch index
  */
-export class EsEntityArgs {
+export class EntityArgs {
   /** Name of the index */
   index?: string;
   /** Type of the index */
@@ -17,10 +17,10 @@ export class EsEntityArgs {
 }
 
 /**
- * @EsEntity decorator : register the entity in the mapping through the EsMappingService
+ * @Entity decorator : register the entity in the mapping through the MappingService
  * @param args decorator annotation
  */
-export function EsEntity(args?: EsEntityArgs): ClassDecorator {
+export function Entity(args?: EntityArgs): ClassDecorator {
   return (target: any) => {
     if (args && !args.type) {
       args.type = args.index;
@@ -33,6 +33,6 @@ export function EsEntity(args?: EsEntityArgs): ClassDecorator {
       superClass = protoType;
     }
 
-    EsMappingService.getInstance().addEntity(args, target, superClass);
+    MappingService.getInstance().addEntity(args, target, superClass);
   };
 }

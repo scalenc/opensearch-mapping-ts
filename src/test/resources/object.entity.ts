@@ -1,20 +1,20 @@
-import { EsEntity, EsField } from '../../lib/es-mapping-ts';
+import { Entity, Field } from '../../lib/es-mapping-ts';
 
-@EsEntity()
+@Entity()
 export class ObjectEntity {
 
-  @EsField({
+  @Field({
     type: 'text',
     analyzer : 'whitespace',
   })
   name: string;
 
-  @EsField({
+  @Field({
     type: 'integer',
   })
   age: number;
 
-  @EsField({
+  @Field({
     name: 'date_of_birth',
     type: 'text',
   })

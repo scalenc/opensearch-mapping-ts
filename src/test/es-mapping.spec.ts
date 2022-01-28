@@ -1,6 +1,6 @@
 import 'reflect-metadata';
-import { EsMappingService } from '../lib/es-mapping-ts';
-import './resources/concret.entity';
+import { MappingService } from '../lib/es-mapping-ts';
+import './resources/actual.entity';
 import './resources/dynamic.entity';
 import './resources/extending.entity';
 import './resources/master.entity';
@@ -10,12 +10,12 @@ import { ReadOnlyEntity } from './resources/read-only.entity';
 describe('es-mapping unit:test', () => {
 
   it('Mapping for type "masterType" should exist', () => {
-    const mapping = EsMappingService.getInstance().getMappingForType('masterType');
+    const mapping = MappingService.getInstance().getMappingForType('masterType');
     expect(mapping).toBeDefined();
   });
 
   it('Mapping for index "extending" should exist', () => {
-    const mapping = EsMappingService.getInstance().getMappingForIndex('extending');
+    const mapping = MappingService.getInstance().getMappingForIndex('extending');
     expect(mapping).toBeDefined();
 
     expect(mapping.body).toBeDefined();
@@ -53,8 +53,8 @@ describe('es-mapping unit:test', () => {
 
   });
 
-  it('Mapping for index "concret" should exist', () => {
-    const mapping = EsMappingService.getInstance().getMappingForIndex('concret');
+  it('Mapping for index "actual" should exist', () => {
+    const mapping = MappingService.getInstance().getMappingForIndex('actual');
     expect(mapping).toBeDefined();
 
     expect(mapping.body.properties.abstractName).toBeDefined();
@@ -64,12 +64,12 @@ describe('es-mapping unit:test', () => {
     expect(mapping.body.properties.overridableName.type).toEqual('text');
     expect(mapping.body.properties.overridableName.null_value).toEqual('undefined');
 
-    expect(mapping.body.properties.concretName).toBeDefined();
-    expect(mapping.body.properties.concretName.type).toEqual('text');
+    expect(mapping.body.properties.actualName).toBeDefined();
+    expect(mapping.body.properties.actualName.type).toEqual('text');
   });
 
   it('Mapping for index "dynamic-strict" should exist', () => {
-    const mapping = EsMappingService.getInstance().getMappingForType('dynamicStrict');
+    const mapping = MappingService.getInstance().getMappingForType('dynamicStrict');
     expect(mapping).toBeDefined();
 
     expect(mapping.index).toEqual('dynamic-strict');
@@ -77,7 +77,7 @@ describe('es-mapping unit:test', () => {
   });
 
   it('Mapping for index "dynamic-true" should exist', () => {
-    const mapping = EsMappingService.getInstance().getMappingForType('dynamicTrue');
+    const mapping = MappingService.getInstance().getMappingForType('dynamicTrue');
     expect(mapping).toBeDefined();
 
     expect(mapping.index).toEqual('dynamic-true');
@@ -85,7 +85,7 @@ describe('es-mapping unit:test', () => {
   });
 
   it('Mapping for index "dynamic-false" should exist', () => {
-    const mapping = EsMappingService.getInstance().getMappingForType('dynamicFalse');
+    const mapping = MappingService.getInstance().getMappingForType('dynamicFalse');
     expect(mapping).toBeDefined();
 
     expect(mapping.index).toEqual('dynamic-false');
@@ -93,32 +93,32 @@ describe('es-mapping unit:test', () => {
   });
 
   it('Mapping for index "nestedInd" should exist', () => {
-    const mappings = EsMappingService.getInstance().getMappingForIndex('nestedInd');
+    const mappings = MappingService.getInstance().getMappingForIndex('nestedInd');
     expect(mappings).toBeDefined();
   });
 
   it('Mapping for index "object" should not exist', () => {
-    const mappings = EsMappingService.getInstance().getMappingForIndex('object');
+    const mappings = MappingService.getInstance().getMappingForIndex('object');
     expect(mappings).toBeNull();
   });
 
   it('Mapping for class "ObjectEntity" should exist', () => {
-    const mappings = EsMappingService.getInstance().getMappingForClass('ObjectEntity');
+    const mappings = MappingService.getInstance().getMappingForClass('ObjectEntity');
     expect(mappings).toBeDefined();
   });
 
   it('Mapping for class unknow should not exist', () => {
-    const mapping = EsMappingService.getInstance().getMappingForClass('unknow');
+    const mapping = MappingService.getInstance().getMappingForClass('unknow');
     expect(mapping).toBeNull();
   });
 
   it('Mapping for type unknow should not exist', () => {
-    const mapping = EsMappingService.getInstance().getMappingForType('unknow');
+    const mapping = MappingService.getInstance().getMappingForType('unknow');
     expect(mapping).toBeNull();
   });
 
   it('Mapping for type "masterType" should exist', () => {
-    const mapping = EsMappingService.getInstance().getMappingForIndex('master');
+    const mapping = MappingService.getInstance().getMappingForIndex('master');
     expect(mapping).toBeDefined();
     expect(mapping.body).toBeDefined();
     expect(mapping.index).toEqual('master');
@@ -150,27 +150,27 @@ describe('es-mapping unit:test', () => {
   });
 
   it('should return mappings map', () => {
-    const mappings = EsMappingService.getInstance().getMappings();
+    const mappings = MappingService.getInstance().getMappings();
     expect(mappings.length).toEqual(10);
   });
 
   it('should return mapping indexes', () => {
-    const indexes = EsMappingService.getInstance().getAllIndex();
+    const indexes = MappingService.getInstance().getAllIndex();
     expect(indexes.length).toEqual(7);
   });
 
   it('should return es mappings', () => {
-    const esMappings = EsMappingService.getInstance().getEsMappings();
-    expect(esMappings.length).toEqual(10);
+    const mappings = MappingService.getInstance().getMappings();
+    expect(mappings.length).toEqual(10);
   });
 
   it('should return mappings', () => {
-    const mappings = EsMappingService.getInstance().getMappings();
+    const mappings = MappingService.getInstance().getMappings();
     expect(mappings.length).toEqual(10);
   });
 
   it('should return the mapping map', () => {
-    const mappingsMap = EsMappingService.getInstance().getMappingsMap();
+    const mappingsMap = MappingService.getInstance().getMappingsMap();
     expect(mappingsMap).toBeDefined();
   });
 
@@ -193,23 +193,23 @@ describe('es-mapping unit:test', () => {
   });
 
   it('should rename keys if name is provided', () => {
-    const mapping = EsMappingService.getInstance().getMappingForClass(ObjectEntity.name);
+    const mapping = MappingService.getInstance().getMappingForClass(ObjectEntity.name);
     const properties = Object.keys(mapping.body.properties);
     expect(properties.includes('date_of_birth')).toBeTruthy();
   });
 
   it('should not add name to the es mapping', () => {
-    const mapping = EsMappingService.getInstance().getMappingForClass(ObjectEntity.name);
+    const mapping = MappingService.getInstance().getMappingForClass(ObjectEntity.name);
     const dob = mapping.body.properties['date_of_birth'];
     const fields = Object.keys(dob);
     expect(fields.includes('name')).toBeFalsy();
   });
 
   it('should create a read only entity', () => {
-    const mapping = EsMappingService.getInstance().getMappingForClass(ReadOnlyEntity.name);
+    const mapping = MappingService.getInstance().getMappingForClass(ReadOnlyEntity.name);
     expect(mapping).toBeDefined();
 
-    const mappings = EsMappingService.getInstance().getMappings();
+    const mappings = MappingService.getInstance().getInternalMappings();
     const readonlyMappings = mappings.filter((m) => m.readonly);
     expect(readonlyMappings).toHaveLength(1);
   });

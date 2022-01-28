@@ -1,13 +1,13 @@
-import { EsEntity, EsField } from '../../lib/es-mapping-ts';
+import { Entity, Field } from '../../lib/es-mapping-ts';
 import { MasterEntity } from './master.entity';
 
-@EsEntity({
+@Entity({
   index: 'extending',
   type: 'typeExtending',
 })
 export class ExtendingEntity extends MasterEntity {
 
-  @EsField({
+  @Field({
     type: 'text',
   })
   extendend?: string;

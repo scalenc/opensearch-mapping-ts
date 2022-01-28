@@ -1,21 +1,23 @@
-# Es Mapping TS
+# OpenSearch Mappings TS
 
-[![GitHub version](https://img.shields.io/badge/licence-MIT-green.svg)](https://github.com/xrobert35/es-mapping-ts)
-[![GitHub version](https://img.shields.io/badge/version-1.0.1-blue.svg)](https://github.com/xrobert35/es-mapping-ts)
-[![Build Status](https://travis-ci.org/xrobert35/es-mapping-ts.svg?branch=master)](https://travis-ci.org/xrobert35/es-mapping-ts)
-[![Coverage Status](https://coveralls.io/repos/github/xrobert35/es-mapping-ts/badge.svg?kill_cache=1)](https://coveralls.io/github/xrobert35/es-mapping-ts)
+[![GitHub version](https://img.shields.io/badge/licence-MIT-green.svg)](https://github.com/scalenc/opensearch-mapping-ts)
+[![GitHub version](https://img.shields.io/badge/version-1.0.1-blue.svg)](https://github.com/scalenc/opensearch-mapping-ts)
 
-This library is used to generate elasticsearch mapping through typescript decorators
+This library is used to generate mappings for [OpenSearch](https://opensearch.org/) from typescript decorators. It is based on and forked from [es-mappings-ts](https://github.com/xrobert35/opensearch-mappng-ts), thanks and all credit to the authors.
 
 ## Installation
 
+To install the this package, simply use your favorite package manager:
+
 ```sh
-npm install es-mapping-ts --save
+npm install opensearch-mappng-ts
+yarn add opensearch-mappng-ts
+pnpm add opensearch-mappng-ts
 ```
 
-## Peer dependencies 
+## Peer Dependencies
 
-This package only work with **@elastic/elasticsearch**
+This package depends on **@opensearch-project/opensearch**
 
 ## Version
 
@@ -30,46 +32,46 @@ This package only work with **@elastic/elasticsearch**
 ### Create the mapping
 
 ```typescript
-import { EsEntity, EsField } from 'es-mapping-ts';
+import { Entity, Field } from 'opensearch-mappng-ts';
 import { ObjectEntity } from './object.entity';
 import { NestedEntity } from './nested.entity';
 
-@EsEntity({
+@Entity({
   index: 'master',
   type: 'masterType'
 })
 export class MasterEntity {
 
-  @EsField({
+  @Field({
     type : 'text'
   })
   name?: string;
 
-  @EsField({
+  @Field({
     type: 'text',
     copy_to : 'name'
   })
   firstname: string;
 
-  @EsField({
+  @Field({
     type: 'text',
     copy_to : 'name'
   })
   lastname: string;
 
-  @EsField({
+  @Field({
     type: 'join',
     relations: { 'master': 'submaster' }
   })
   master: Array<MasterEntity>;
 
-  @EsField({
+  @Field({
     type: 'object',
     fieldClass: ObjectEntity
   })
   objects: Array<MasterEntity>;
 
-  @EsField({
+  @Field({
     type: 'nested',
     fieldClass: NestedEntity
   })
@@ -78,19 +80,19 @@ export class MasterEntity {
 ```
 
 ```typescript
-import { EsEntity, EsField } from 'es-mapping-ts';
+import { Entity, Field } from 'opensearch-mappng-ts';
 
-@EsEntity({
+@Entity({
   index: 'nested'
 })
 export class NestedEntity {
 
-  @EsField({
+  @Field({
     type: 'text',
   })
   name: string;
 
-  @EsField({
+  @Field({
     type: 'integer'
   })
   montant: number;
@@ -98,20 +100,20 @@ export class NestedEntity {
 ```
 
 ```typescript
-import { EsEntity, EsField } from 'es-mapping-ts';
+import { Entity, Field } from 'opensearch-mappng-ts';
 
 // This es entity is only here for field mapping,
 // it's not supposed to have is own index
-@EsEntity()
+@Entity()
 export class ObjectEntity {
 
-  @EsField({
+  @Field({
     type: 'text',
     analyzer : 'whitespace'
   })
   name: string;
 
-  @EsField({
+  @Field({
     type: 'integer',
   })
   age: number;
@@ -123,7 +125,7 @@ export class ObjectEntity {
 #### Simply call the "uploadMappings"  function
 
 ```typescript
-import { EsMappingService } from 'es-mapping-ts';
+import { EsMappingService } from 'opensearch-mappng-ts';
 import { Client } from '@elastic/elasticsearch';
 
 const esClient = new Client({
@@ -140,7 +142,7 @@ only none readonly entity will be uploaded
 #### or do it yourself
 
 ```typescript
-import { EsMappingService } from 'es-mapping-ts';
+import { EsMappingService } from 'opensearch-mappng-ts';
 
 //List of ready to use generated mapping
 const mappings = EsMappingService.getInstance().getMappings();
@@ -160,12 +162,12 @@ You can also extend EsMapping
 ```typescript
 export class AbstractEntity {
 
-  @EsField({
+  @Field({
     type: 'text',
   })
   abstractName: string;
 
-  @EsField({
+  @Field({
     type: 'text',
   })
   overridableName: string;
@@ -173,19 +175,19 @@ export class AbstractEntity {
 ```
 
 ```typescript
-@EsEntity({
-  index: 'concret',
-  type: 'typeConcret'
+@Entity({
+  index: 'actual',
+  type: 'typeActual'
 })
-export class ConcretEntity extends AbstractEntity {
+export class ActualEntity extends AbstractEntity {
 
-  @EsField({
+  @Field({
     type: 'text'
   })
-  concretName: string;
+  actualName: string;
 
 
-  @EsField({
+  @Field({
     type: 'text',
     null_value : 'undefined'
   })
@@ -198,9 +200,9 @@ export class ConcretEntity extends AbstractEntity {
 You can add mixins to your entities by declaring an entity like so:
 
 ```typescript
-@EsEntity({ mixins: [BaseMixin] })
+@Entity({ mixins: [BaseMixin] })
 export class SomeEntity {
-   @EsField({
+   @Field({
         type: "text",
     })
     name: string;
@@ -210,20 +212,20 @@ export class SomeEntity {
 The mixin class looks like:
 
 ```typescript
-@EsEntity()
+@Entity()
 export class BaseMixin {
-    @EsField({
+    @Field({
        type: "keyword"
     })
     id: string;
 
-    @EsField({
+    @Field({
         name: "start_date",
         type: "date"
     })
     startDate: Date;
 
-    @EsField({
+    @Field({
         name: "end_date",
         type: "date"
     })
@@ -258,7 +260,7 @@ export class BaseMixin {
 
 ## Decorators
 
-### @EsEntity
+### @Entity
 
 | Param | Type |  Description |
 | ------ | ------ | ------ |
@@ -267,7 +269,7 @@ export class BaseMixin {
 | readonly | boolean | Define if the mapping must be uploaded when using uploadMappings function |
 | mixins | Array<any> | Allow you to compose with one or more EsEntities, see "Using mixins" |
 
-### @EsField
+### @Field
 
 | Param | Type |  Description |
 | ------ | ------ | ------ |

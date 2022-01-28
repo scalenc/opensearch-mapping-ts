@@ -1,10 +1,10 @@
-import { EsEntity, EsField } from '../../lib/es-mapping-ts';
+import { Entity, Field } from '../../lib/es-mapping-ts';
 import { NestedEntity } from './nested.entity';
 
-@EsEntity()
+@Entity()
 export class WrongNestedEntity {
 
-  @EsField({
+  @Field({
     type: 'nested',
   })
   nesteds: NestedEntity;

@@ -1,14 +1,14 @@
-import { EsField } from '../../lib/es-mapping-ts';
+import { Field } from '../../lib/es-mapping-ts';
 
 
 export class AbstractEntity {
 
-  @EsField({
+  @Field({
     type: 'text',
   })
   abstractName: string;
 
-  @EsField({
+  @Field({
     type: 'text',
   })
   overridableName: string;

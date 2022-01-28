@@ -1,9 +1,9 @@
-import { EsEntity, EsField } from '../../lib/es-mapping-ts';
+import { Entity, Field } from '../../lib/es-mapping-ts';
 
-@EsEntity({readonly: true})
+@Entity({readonly: true})
 export class ReadOnlyEntity {
 
-  @EsField({
+  @Field({
     type: 'text',
     analyzer : 'whitespace',
   })

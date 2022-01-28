@@ -4,7 +4,7 @@ import { cloneDeep } from 'lodash';
 /**
  * Base format of an elasticsearch mapping
  */
-export class EsMapping {
+export class Mapping {
   index: string;
   type: string;
   include_type_name: boolean;
@@ -19,14 +19,14 @@ export class EsMapping {
 /**
  * Internal mapping to handle specific parameter
  */
-export class InternalEsMapping {
+export class InternalMapping {
   index: string;
   type: string;
   readonly: boolean;
-  esmapping: EsMapping = new EsMapping();
-  properties: Map<string | symbol, InternalEsMappingProperty> = new Map();
+  mapping: Mapping = new Mapping();
+  properties: Map<string | symbol, InternalMappingProperty> = new Map();
 
-  addProperty(name: string | symbol, mapping: InternalEsMappingProperty): void {
+  addProperty(name: string | symbol, mapping: InternalMappingProperty): void {
     this.properties.set(name, mapping);
 
     const propertyMapping = cloneDeep(mapping.propertyMapping);
@@ -34,14 +34,14 @@ export class InternalEsMapping {
     // remove the name field from the es-mapping
     delete (propertyMapping as any).name;
 
-    this.esmapping.body.properties[name] = propertyMapping;
+    this.mapping.body.properties[name] = propertyMapping;
   }
 }
 
 /**
  * Base format of an elasticsearch property
  */
-export interface EsMappingProperty {
+export interface MappingProperty {
   type?: string;
   analyzer?: string;
   properties?: any;
@@ -51,12 +51,12 @@ export interface EsMappingProperty {
 /**
  * Base format of an elasticsearch property
  */
-export interface InternalEsMappingProperty extends EsMappingProperty {
-  propertyMapping: EsMappingProperty;
-  transformers?: EsMappingPropertyTranformer[];
+export interface InternalMappingProperty extends MappingProperty {
+  propertyMapping: MappingProperty;
+  transformers?: MappingPropertyTranformer[];
 }
 
-export interface EsMappingPropertyTranformer {
+export interface MappingPropertyTranformer {
   fieldName: string;
   transformer: EsPropertyTranformer;
 }

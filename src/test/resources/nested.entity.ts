@@ -1,16 +1,16 @@
-import { EsEntity, EsField } from '../../lib/es-mapping-ts';
+import { Entity, Field } from '../../lib/es-mapping-ts';
 
-@EsEntity({
+@Entity({
   index: 'nested',
 })
 export class NestedEntity {
 
-  @EsField({
+  @Field({
     type: 'text',
   })
   name: string;
 
-  @EsField({
+  @Field({
     type: 'integer',
   })
   montant: number;

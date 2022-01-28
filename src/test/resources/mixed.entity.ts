@@ -1,10 +1,10 @@
-import { EsEntity, EsField } from '../../lib/es-mapping-ts';
+import { Entity, Field } from '../../lib/es-mapping-ts';
 import { DetailsMixin } from './details.mixin';
 
-@EsEntity({mixins: [DetailsMixin]})
+@Entity({mixins: [DetailsMixin]})
 export class MixedEntity {
 
-  @EsField({
+  @Field({
     type : 'text',
   })
   id: string;
