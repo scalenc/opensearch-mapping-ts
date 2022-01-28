@@ -61,7 +61,10 @@ describe('es-mapping unit:test', () => {
 
     expect(mapping.body.properties.overridableName).not.to.be.undefined;
     expect(mapping.body.properties.overridableName.type).to.eql('text');
-    expect(mapping.body.properties.overridableName.null_value).to.eql('undefined');
+
+    expect(mapping.body.properties.overridableNumber).not.to.be.undefined;
+    expect(mapping.body.properties.overridableNumber.type).to.eql('double');
+    expect(mapping.body.properties.overridableNumber.null_value).to.eql(1);
 
     expect(mapping.body.properties.concreteName).not.to.be.undefined;
     expect(mapping.body.properties.concreteName.type).to.eql('text');
@@ -72,7 +75,7 @@ describe('es-mapping unit:test', () => {
     expect(mapping).not.to.be.undefined;
 
     expect(mapping.index).to.eql('dynamic-strict');
-    expect(mapping.dynamic).to.eql('strict');
+    expect(mapping.body.dynamic).to.eql('strict');
   });
 
   it('Mapping for index "dynamic-true" should exist', () => {
@@ -80,7 +83,7 @@ describe('es-mapping unit:test', () => {
     expect(mapping).not.to.be.undefined;
 
     expect(mapping.index).to.eql('dynamic-true');
-    expect(mapping.dynamic).to.be.true;
+    expect(mapping.body.dynamic).to.be.true;
   });
 
   it('Mapping for index "dynamic-false" should exist', () => {
@@ -88,7 +91,7 @@ describe('es-mapping unit:test', () => {
     expect(mapping).not.to.be.undefined;
 
     expect(mapping.index).to.eql('dynamic-false');
-    expect(mapping.dynamic).to.be.false;
+    expect(mapping.body.dynamic).to.be.false;
   });
 
   it('Mapping for index "nestedInd" should exist', () => {

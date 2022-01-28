@@ -62,14 +62,14 @@ export class OpenSearchMappingService {
 
     if (args) {
       mapping.osmapping.index = args.index;
-      mapping.osmapping.dynamic = args.dynamic;
+      mapping.osmapping.body.dynamic = args.dynamic;
       mapping.readonly = args.readonly === true;
 
       if (args.mixins) {
         for (const mixin of args.mixins) {
-          const OpenSearchEntity = this.osmappings.get(mixin.name);
-          if (OpenSearchEntity) {
-            mergeProperties(OpenSearchEntity.osmapping.body.properties);
+          const openSearchEntity = this.osmappings.get(mixin.name);
+          if (openSearchEntity) {
+            mergeProperties(openSearchEntity.osmapping.body.properties);
           }
         }
       }
@@ -175,10 +175,6 @@ export class OpenSearchMappingService {
         if (!internalMapping.readonly) {
           const openSearchMapping = internalMapping.osmapping;
 
-          // delete type for indices
-          if (openSearchMapping.index) {
-            delete openSearchMapping.type;
-          }
           // delete readonly
           delete internalMapping.readonly;
 

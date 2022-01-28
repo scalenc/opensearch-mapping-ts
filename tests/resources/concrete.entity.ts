@@ -6,6 +6,9 @@ export class ConcreteEntity extends AbstractEntity {
   @OpenSearchField({ type: 'text' })
   concreteName: string;
 
-  @OpenSearchField({ type: 'text', null_value: 'undefined' })
+  @OpenSearchField({ type: 'double', null_value: 1 })
+  overridableNumber: string;
+
+  @OpenSearchField({ type: 'text' })
   overridableName: string;
 }

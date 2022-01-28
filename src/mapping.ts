@@ -6,8 +6,10 @@ import { cloneDeep } from 'lodash';
 export class OpenSearchMapping {
   index: string;
   type: string;
-  dynamic: boolean | 'strict' | 'runtime';
-  body: { properties: any };
+  body: {
+    dynamic?: boolean | 'strict' | 'runtime';
+    properties: any;
+  };
 
   constructor() {
     this.body = { properties: {} };

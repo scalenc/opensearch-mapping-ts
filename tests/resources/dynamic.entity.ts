@@ -2,7 +2,7 @@ import { OpenSearchEntity, OpenSearchField } from '../../src';
 
 @OpenSearchEntity({ index: 'dynamic-strict', dynamic: 'strict' })
 export class DynamicStrictEntity {
-  @OpenSearchField({})
+  @OpenSearchField({ type: 'text' })
   field: string;
 }
 
