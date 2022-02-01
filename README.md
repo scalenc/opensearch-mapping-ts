@@ -1,18 +1,18 @@
 # OpenSearch Mappings TS
 
 [![GitHub version](https://img.shields.io/badge/licence-MIT-green.svg)](https://github.com/scalenc/opensearch-mapping-ts)
-[![GitHub version](https://img.shields.io/badge/version-1.0.1-blue.svg)](https://github.com/scalenc/opensearch-mapping-ts)
+[![GitHub version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/scalenc/opensearch-mapping-ts)
 
-This library is used to generate mappings for [OpenSearch](https://opensearch.org/) from typescript decorators. It is based on and forked from [es-mappings-ts](https://github.com/xrobert35/opensearch-mappng-ts), thanks and all credit to the authors.
+This library is used to generate mappings for [OpenSearch](https://opensearch.org/) from typescript decorators. It is based on and forked from [es-mappings-ts](https://github.com/xrobert35/opensearch-mapping-ts), thanks and all credit to the authors.
 
 ## Installation
 
 To install the this package, simply use your favorite package manager:
 
 ```sh
-npm install opensearch-mappng-ts
-yarn add opensearch-mappng-ts
-pnpm add opensearch-mappng-ts
+npm install opensearch-mapping-ts
+yarn add opensearch-mapping-ts
+pnpm add opensearch-mapping-ts
 ```
 
 ## Peer Dependencies
@@ -21,120 +21,91 @@ This package depends on **@opensearch-project/opensearch**
 
 ## Version
 
-### tested with
+### Compatibility
 
-* elasticsearch 7
-* elasticsearch 6  
-* elasticsearch 5 
+- OpenSearch v1
+- Elasticsearch v7
+
+### Migration
+
+For compatibility reasons, there are aliases for all entities that allow using the Elasticsearch flavoured decorators,
+such as `EsEntity`, `EsField` etc.
+However as OpenSearch does not support `type`s for indices that were deprecated since Elasticsearch v6, these are removed in this library.
 
 ## Examples
 
-### Create the mapping
+### Define mappings using class and field decorators
 
 ```typescript
-import { Entity, Field } from 'opensearch-mappng-ts';
+import { OpenSearchEntity, OpenSearchField } from 'opensearch-mapping-ts';
 import { ObjectEntity } from './object.entity';
 import { NestedEntity } from './nested.entity';
 
-@Entity({
-  index: 'master',
-  type: 'masterType'
-})
+@OpenSearchEntity({ index: 'master' })
 export class MasterEntity {
-
-  @Field({
-    type : 'text'
-  })
+  @OpenSearchField({ type: 'text' })
   name?: string;
 
-  @Field({
-    type: 'text',
-    copy_to : 'name'
-  })
-  firstname: string;
+  @OpenSearchField({ type: 'text', copy_to: 'name' })
+  firstName: string;
 
-  @Field({
-    type: 'text',
-    copy_to : 'name'
-  })
-  lastname: string;
+  @OpenSearchField({ type: 'text', copy_to: 'name' })
+  lastName: string;
 
-  @Field({
-    type: 'join',
-    relations: { 'master': 'submaster' }
-  })
+  @OpenSearchField({ type: 'join', relations: { master: 'submaster' } })
   master: Array<MasterEntity>;
 
-  @Field({
-    type: 'object',
-    fieldClass: ObjectEntity
-  })
+  @OpenSearchField({ type: 'object', fieldClass: ObjectEntity })
   objects: Array<MasterEntity>;
 
-  @Field({
-    type: 'nested',
-    fieldClass: NestedEntity
-  })
+  @OpenSearchField({ type: 'nested', fieldClass: NestedEntity })
   nested: Array<NestedEntity>;
 }
 ```
 
 ```typescript
-import { Entity, Field } from 'opensearch-mappng-ts';
+import { OpenSearchEntity, OpenSearchField } from 'opensearch-mapping-ts';
 
-@Entity({
-  index: 'nested'
-})
+@OpenSearchEntity({ index: 'nested' })
 export class NestedEntity {
-
-  @Field({
-    type: 'text',
-  })
+  @OpenSearchField({ type: 'text' })
   name: string;
 
-  @Field({
-    type: 'integer'
-  })
+  @OpenSearchField({ type: 'integer' })
   montant: number;
 }
 ```
 
 ```typescript
-import { Entity, Field } from 'opensearch-mappng-ts';
+import { OpenSearchEntity, OpenSearchField } from 'opensearch-mapping-ts';
 
 // This es entity is only here for field mapping,
 // it's not supposed to have is own index
-@Entity()
+@OpenSearchEntity()
 export class ObjectEntity {
-
-  @Field({
-    type: 'text',
-    analyzer : 'whitespace'
-  })
+  @OpenSearchField({ type: 'text', analyzer: 'whitespace' })
   name: string;
 
-  @Field({
-    type: 'integer',
-  })
+  @OpenSearchField({ type: 'integer' })
   age: number;
 }
 ```
 
 ### Get the generated mappings
 
-#### Simply call the "uploadMappings"  function
+#### Simply call the "uploadMappings" function
 
 ```typescript
-import { EsMappingService } from 'opensearch-mappng-ts';
+import { OpenSearchMappingService } from 'opensearch-mapping-ts';
 import { Client } from '@elastic/elasticsearch';
 
-const esClient = new Client({
+const client = new Client({
   host: 'http://localhost:9200',
-  log : 'info'
+  log: 'info',
 });
 
 // Upload the mapping
-const mappings = EsMappingService.getInstance().uploadMappings(esClient);
+const mappings = OpenSearchMappingService.getInstance().uploadMappings(client);
 ```
 
 only none readonly entity will be uploaded
@@ -142,94 +113,68 @@ only none readonly entity will be uploaded
 #### or do it yourself
 
 ```typescript
-import { EsMappingService } from 'opensearch-mappng-ts';
+import { OpenSearchMappingService } from 'opensearch-mapping-ts';
 
-//List of ready to use generated mapping
-const mappings = EsMappingService.getInstance().getMappings();
+const mappings = OpenSearchMappingService.getInstance().getMappings();
 
-Bluebird.each(mappings, async (mapping) => {
-    //create index
-    await esclient.indices.create({ index: mapping.index  });
-
-    //create mapping
-    await esclient.indices.putMapping(mapping);
+Promise.all(mappings.map(async (mapping) => {
+    await client.indices.create({ index: mapping.index  });
+    await client.indices.putMapping(mapping);
 });
 ```
 
 ### Inheritance
-You can also extend EsMapping
+
+You can also extend OpenSearchMapping
 
 ```typescript
 export class AbstractEntity {
-
-  @Field({
+  @OpenSearchField({
     type: 'text',
   })
   abstractName: string;
 
-  @Field({
-    type: 'text',
-  })
+  @OpenSearchField({ type: 'text' })
   overridableName: string;
 }
 ```
 
 ```typescript
-@Entity({
-  index: 'actual',
-  type: 'typeActual'
-})
+@OpenSearchEntity({ index: 'actual', type: 'typeActual' })
 export class ActualEntity extends AbstractEntity {
-
-  @Field({
-    type: 'text'
-  })
+  @OpenSearchField({ type: 'text' })
   actualName: string;
 
-
-  @Field({
-    type: 'text',
-    null_value : 'undefined'
-  })
-  overridableName: string;
+  @OpenSearchField({ type: 'souble', null_value: 1 })
+  overridableNumber: string;
 }
 ```
 
-
 ### Using mixins
+
 You can add mixins to your entities by declaring an entity like so:
 
 ```typescript
-@Entity({ mixins: [BaseMixin] })
+@OpenSearchEntity({ mixins: [BaseMixin] })
 export class SomeEntity {
-   @Field({
-        type: "text",
-    })
-    name: string;
+  @OpenSearchField({ type: 'text' })
+  name: string;
 }
 ```
 
 The mixin class looks like:
 
 ```typescript
-@Entity()
+@OpenSearchEntity()
 export class BaseMixin {
-    @Field({
-       type: "keyword"
-    })
-    id: string;
+  @OpenSearchField({ type: 'keyword' })
+  id: string;
 
-    @Field({
-        name: "start_date",
-        type: "date"
-    })
-    startDate: Date;
+  @OpenSearchField({ name: 'start_date', type: 'date' })
+  startDate: Date;
 
-    @Field({
-        name: "end_date",
-        type: "date"
-    })
-    endDate: Date;
+  @OpenSearchField({ name: 'end_date', type: 'date' })
+  endDate: Date;
 }
 ```
 
@@ -237,88 +182,81 @@ export class BaseMixin {
 
 ```json
 {
-    "body": {
-        "properties": {
-            "name": {
-                "type": "text",
-            },
-            "id": {
-                "type": "keyword",
-            },
-            "start_date": {
-                "name": "start_date",
-                "type": "date",
-            },
-            "end_date": {
-                "name": "end_date",
-                "type": "date",
-            },
-        }
+  "body": {
+    "properties": {
+      "name": {
+        "type": "text"
+      },
+      "id": {
+        "type": "keyword"
+      },
+      "start_date": {
+        "name": "start_date",
+        "type": "date"
+      },
+      "end_date": {
+        "name": "end_date",
+        "type": "date"
+      }
     }
+  }
 }
 ```
 
 ## Decorators
 
-### @Entity
+### @OpenSearchEntity
 
-| Param | Type |  Description |
-| ------ | ------ | ------ |
-| index | string | Allow you to define the index name |
-| type | string | Allow you to define the index type |
-| readonly | boolean | Define if the mapping must be uploaded when using uploadMappings function |
-| mixins | Array<any> | Allow you to compose with one or more EsEntities, see "Using mixins" |
+| Param    | Type       | Description                                                               |
+| -------- | ---------- | ------------------------------------------------------------------------- |
+| index    | string     | Allow you to define the index name                                        |
+| type     | string     | Allow you to define the index type                                        |
+| readonly | boolean    | Define if the mapping must be uploaded when using uploadMappings function |
+| mixins   | Array<any> | Allow you to compose with one or more EsEntities, see "Using mixins"      |
 
-### @Field
+### @OpenSearchField
 
-| Param | Type |  Description |
-| ------ | ------ | ------ |
-| type | string | Allow you to define the type of the index |
-| name | string | Allow you to define the name of the property if different from the property name |
-| dynamic | boolean | Allow you to define if the field can accept additional properties |
-| analyzer | string | Allow you to define the elasticsearch analyzer |
-| fields | string | Allow you to define the elasticsearch fields |
-| format | string | Allow you to define the format (ie for date field) |
-| enabled | boolean | Allow you to enable ou disable the field |
-| null_value | string | Allow you to define the null value of the field |
-| copy_to | string | Allow you to copy the field value into a group field for _search |
-| relations | string | Define the releation for a join type |
-| fieldClass | string | Class used to get the properties of the nested or object array type |
+| Param      | Type    | Description                                                                      |
+| ---------- | ------- | -------------------------------------------------------------------------------- |
+| type       | string  | Allow you to define the type of the index                                        |
+| name       | string  | Allow you to define the name of the property if different from the property name |
+| dynamic    | boolean | Allow you to define if the field can accept additional properties                |
+| analyzer   | string  | Allow you to define the elasticsearch analyzer                                   |
+| fields     | string  | Allow you to define the elasticsearch fields                                     |
+| format     | string  | Allow you to define the format (ie for date field)                               |
+| enabled    | boolean | Allow you to enable ou disable the field                                         |
+| null_value | string  | Allow you to define the null value of the field                                  |
+| copy_to    | string  | Allow you to copy the field value into a group field for \_search                |
+| relations  | string  | Define the releation for a join type                                             |
+| fieldClass | string  | Class used to get the properties of the nested or object array type              |
 
 Additional properties are allowed, allowing you to manage other elasticsearch properties
 
-## How to dev
-
-### test en build
+## Development
 
 ```shell
-# launch unit testing
-npm run test 
 
-# build
-npm run build
+# build the code
+yarn build
+
+# unit tests only
+npm test:unit
+
+# integration tests only
+npm test:integration
+
+#  starting an OpenSearch instance within a container and running all tests
+npm test:local
+
 ```
 
-This project is also managed by travis for CI
+### CI
 
-### release
-
-```
-npm run build
-npm run test
-
-mkdir release
-cp -r dist release
-cp LICENSE release
-cp README.md release
-cp package.json release #change version
-
-cd relese
-npm publish
-```
+All branches are built and tested using Gitlab CI.
+Changes on the master branch will be deployed to npm.js
 
 ## License
 
-----
+---
 
 MIT

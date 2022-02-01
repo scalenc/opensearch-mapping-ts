@@ -8,10 +8,10 @@ export class MasterEntity {
   name?: string;
 
   @OpenSearchField({ type: 'text', copy_to: 'name' })
-  firstname: string;
+  firstName: string;
 
   @OpenSearchField({ type: 'text', copy_to: 'name' })
-  lastname: string;
+  lastName: string;
 
   @OpenSearchField({ enabled: false, name: 'customName' })
   notIndexed: string;

@@ -26,16 +26,16 @@ describe('es-mapping unit:test', () => {
     expect(mapping.body.properties.name).not.to.be.undefined;
     expect(mapping.body.properties.name.type).to.eql('text');
 
-    expect(mapping.body.properties.firstname).not.to.be.undefined;
-    expect(mapping.body.properties.firstname.copy_to).to.eql('name');
+    expect(mapping.body.properties.firstName).not.to.be.undefined;
+    expect(mapping.body.properties.firstName.copy_to).to.eql('name');
 
     expect(mapping.body.properties.notIndexed).to.be.undefined;
     expect(mapping.body.properties.customName).not.to.be.undefined;
     expect(mapping.body.properties.customName.name).to.be.undefined;
     expect(mapping.body.properties.customName.enabled).to.eql(false);
 
-    expect(mapping.body.properties.lastname).not.to.be.undefined;
-    expect(mapping.body.properties.lastname.copy_to).to.eql('name');
+    expect(mapping.body.properties.lastName).not.to.be.undefined;
+    expect(mapping.body.properties.lastName.copy_to).to.eql('name');
 
     expect(mapping.body.properties.extendend).not.to.be.undefined;
     expect(mapping.body.properties.extendend.type).to.eql('text');
@@ -127,16 +127,16 @@ describe('es-mapping unit:test', () => {
     expect(mapping.body.properties.name).not.to.be.undefined;
     expect(mapping.body.properties.name.type).to.eql('text');
 
-    expect(mapping.body.properties.firstname).not.to.be.undefined;
-    expect(mapping.body.properties.firstname.copy_to).to.eql('name');
+    expect(mapping.body.properties.firstName).not.to.be.undefined;
+    expect(mapping.body.properties.firstName.copy_to).to.eql('name');
 
     expect(mapping.body.properties.notIndexed).to.be.undefined;
     expect(mapping.body.properties.customName).not.to.be.undefined;
     expect(mapping.body.properties.customName.name).to.be.undefined;
     expect(mapping.body.properties.customName.enabled).to.eql(false);
 
-    expect(mapping.body.properties.lastname).not.to.be.undefined;
-    expect(mapping.body.properties.lastname.copy_to).to.eql('name');
+    expect(mapping.body.properties.lastName).not.to.be.undefined;
+    expect(mapping.body.properties.lastName.copy_to).to.eql('name');
 
     expect(mapping.body.properties.objects).not.to.be.undefined;
     expect(mapping.body.properties.objects.type).to.eql('object');
@@ -221,10 +221,10 @@ describe('mixins', () => {
     const mixedMapping = OpenSearchMappingService.getInstance().getMappingForClass(MixedEntity.name);
     const mixin = OpenSearchMappingService.getInstance().getMappingForClass(DetailsMixin.name);
 
-    expect(mixedMapping.body.properties['firstname']).to.eql(mixin.body.properties['firstname']);
-    expect(mixedMapping.body.properties['lastname']).to.eql(mixin.body.properties['lastname']);
+    expect(mixedMapping.body.properties['firstName']).to.eql(mixin.body.properties['firstName']);
+    expect(mixedMapping.body.properties['lastName']).to.eql(mixin.body.properties['lastName']);
     expect(mixedMapping.body.properties['id']).not.to.be.undefined;
 
-    expect(Object.keys(mixedMapping.body.properties)).to.eql(['id', 'firstname', 'lastname']);
+    expect(Object.keys(mixedMapping.body.properties)).to.eql(['id', 'firstName', 'lastName']);
   });
 });
