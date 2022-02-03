@@ -7,10 +7,13 @@ import { OpenSearchMappingService } from './mapping.service';
 export class OpenSearchEntityArgs {
   /** Name of the index */
   index?: string;
+
   /** create mapping or not */
   readonly?: boolean;
+
   /** Additional properties or not */
   dynamic?: boolean | 'strict' | 'runtime';
+
   /** add mixins */
   mixins?: any[];
 }
