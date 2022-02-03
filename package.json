@@ -1,11 +1,10 @@
 {
-  "name": "opensearch-mapping-ts",
+  "name": "@scalenc/opensearch-mapping-ts",
   "version": "0.0.0-development",
   "description": "Generate OpenSearch mappings from typescript decorators",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "prepare": "husky install",
     "lint": "eslint .",
     "build": "tsc",
     "start-local-os": "DOCKER=$(which docker || which podman)  && ($DOCKER stop opensearch-mapping-ts-opensearch; $DOCKER rm opensearch-mapping-ts-opensearch; $DOCKER run --name opensearch-mapping-ts-opensearch -p 9201:9200 -e discovery.type=single-node -e plugins.security.disabled=true -d opensearchproject/opensearch:1.2.4)",

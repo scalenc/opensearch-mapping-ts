@@ -29,16 +29,18 @@ tag:
     - master
   script:
     - npx semantic-release
-# deploy:
-#   stage: deploy
-#   only:
-#     - tags
-#   environment:
-#     name: npm
-#     url: https://www.npmjs.com/package/@scalenc/opensearch-mapping-ts
-#   script:
-#     - 'sed -ie "s/\"version\":[ ]*\"[^\"]*\"/\"version\": \"`git describe --tags | tr -d v`\"/g" package.json'
-#     - yarn global add serverless@2.34 --no-progress
-#     - yarn
-#     - yarn run deploy --stage dev --verbose
 
+deploy:
+  stage: deploy
+  only:
+    - tags
+  environment:
+    name: npm
+    url: https://www.npmjs.com/package/@scalenc/opensearch-mapping-ts
+  before_script:
+    - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
+  script:
+    - 'sed -ie "s/\"version\":[ ]*\"[^\"]*\"/\"version\": \"`git describe --tags | tr -d v`\"/g" package.json'
+    - cat <<< $(jq "del(.scripts.prepare)" package.json) > package.json
+    - yarn
+    - yarn publish
