@@ -15,24 +15,18 @@ yarn add opensearch-mapping-ts
 pnpm add opensearch-mapping-ts
 ```
 
-## Peer Dependencies
-
-This package depends on **@opensearch-project/opensearch**
-
-## Version
-
-### Compatibility
+## Compatibility
 
 - OpenSearch v1
 - Elasticsearch v7
 
-The library does not have any (peer-) dependency to the clients of Elasticsearch (https://github.com/elastic/elasticsearch-js) or OpenSearch (https://github.com/opensearch-project/opensearch-js). However, as these share the same interface, the library can be used with both of them.
+The library does not have any (peer-) dependency to the clients of [Elasticsearch Node.js client](https://github.com/elastic/elasticsearch-js) or OpenSearch [OpenSearch Node.js client](https://github.com/opensearch-project/opensearch-js). However, as these share the same interface, the library can be used with both of them.
 
 ### Migration
 
 For compatibility reasons, there are aliases for all entities that allow using the Elasticsearch flavoured decorators,
 such as `EsEntity`, `EsField` etc.
-However as OpenSearch does not support `type`s for indices that were deprecated since Elasticsearch v6, these are removed in this library.
+The support of `type`s for indices that were deprecated since Elasticsearch v6 was removed.
 
 ## Examples
 
