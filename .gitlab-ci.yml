@@ -4,7 +4,7 @@ default:
 stages:
   - test
   - tag
-  # - deploy
+  - deploy
 
 run-tests:
   stage: test
