@@ -7,9 +7,9 @@ import { SearchClient } from './SearchClient';
  * Service used to manage mapping loading and share it
  */
 export class OpenSearchMappingService {
-  static instance: OpenSearchMappingService;
+  private static instance: OpenSearchMappingService;
 
-  osmappings: Map<string, InternalOpenSearchMapping> = new Map();
+  mappings: Map<string, InternalOpenSearchMapping> = new Map();
 
   /**
    * Get the singleton instance
@@ -31,7 +31,7 @@ export class OpenSearchMappingService {
    */
   addEntity(args: OpenSearchEntityArgs, target: any, superClass: any): void {
     const className = target.name;
-    const mapping = this.osmappings.get(className);
+    const mapping = this.mappings.get(className);
 
     const mergeProperties = (properties) => {
       for (const propertyName of Object.keys(properties)) {
@@ -54,7 +54,7 @@ export class OpenSearchMappingService {
     };
 
     if (superClass) {
-      const superClassMapping = this.osmappings.get(superClass);
+      const superClassMapping = this.mappings.get(superClass);
       if (superClassMapping) {
         mergeProperties(superClassMapping.osmapping.body.properties);
       }
@@ -67,7 +67,7 @@ export class OpenSearchMappingService {
 
       if (args.mixins) {
         for (const mixin of args.mixins) {
-          const openSearchEntity = this.osmappings.get(mixin.name);
+          const openSearchEntity = this.mappings.get(mixin.name);
           if (openSearchEntity) {
             mergeProperties(openSearchEntity.osmapping.body.properties);
           }
@@ -84,16 +84,16 @@ export class OpenSearchMappingService {
    */
   addField(args: OpenSearchFieldArgs, target: any, propertyKey: string | symbol, propertyType?: any): void {
     const className = target.constructor.name;
-    let mapping = this.osmappings.get(className);
+    let mapping = this.mappings.get(className);
     if (!mapping) {
       mapping = new InternalOpenSearchMapping();
-      this.osmappings.set(className, mapping);
+      this.mappings.set(className, mapping);
     }
 
     const properties: OpenSearchMappingProperty = args;
     if (args.type === 'nested' || args.type === 'object') {
       properties.type = args.type;
-      const OpenSearchEntity = this.osmappings.get(propertyType.name);
+      const OpenSearchEntity = this.mappings.get(propertyType.name);
       if (OpenSearchEntity) {
         properties.properties = OpenSearchEntity.osmapping.body.properties;
       }
@@ -111,21 +111,21 @@ export class OpenSearchMappingService {
    * Allow you to get the generated mapping list ready to be inserted inside elasticsearch
    */
   public getMappings(): InternalOpenSearchMapping[] {
-    return Array.from(this.osmappings.values());
+    return Array.from(this.mappings.values());
   }
 
   /**
    * Allow you to get all index
    */
   public getOpenSearchMappings(): OpenSearchMapping[] {
-    return Array.from(this.osmappings.values()).map((mapping) => mapping.osmapping);
+    return Array.from(this.mappings.values()).map((mapping) => mapping.osmapping);
   }
 
   /**
    * Allow you to get the generate mapping map
    */
   public getMappingsMap() {
-    return this.osmappings;
+    return this.mappings;
   }
 
   /**
@@ -133,7 +133,7 @@ export class OpenSearchMappingService {
    * for a class name
    */
   public getMappingForClass(className: string): OpenSearchMapping {
-    const internalMapping = this.osmappings.get(className);
+    const internalMapping = this.mappings.get(className);
     if (internalMapping) {
       return internalMapping.osmapping;
     }
@@ -160,7 +160,7 @@ export class OpenSearchMappingService {
    */
   public getAllIndex(): string[] {
     // load mapping with index
-    const mappings = Array.from(this.osmappings.values()).filter((mapping) => mapping.osmapping.index);
+    const mappings = Array.from(this.mappings.values()).filter((mapping) => mapping.osmapping.index);
     return mappings.map((mapping) => mapping.osmapping.index);
   }
 
