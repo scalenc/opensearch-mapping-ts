@@ -5,7 +5,7 @@ export class AbstractEntity {
   abstractName: string;
 
   @OpenSearchField({ type: 'float' })
-  overridableNumber: string;
+  overridableNumber: number;
 
   @OpenSearchField({ type: 'text' })
   overridableName: string;
