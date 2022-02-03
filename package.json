@@ -63,7 +63,7 @@
   },
   "license": "MIT",
   "files": [
-    "/dist"
+    "./dist/"
   ],
   "mocha": {
     "diff": true,
