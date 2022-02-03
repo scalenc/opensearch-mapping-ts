@@ -10,7 +10,7 @@ import { MixedEntity } from './resources/mixed.entity';
 import { ObjectEntity } from './resources/object.entity';
 import { ReadOnlyEntity } from './resources/read-only.entity';
 
-describe('es-mapping unit:test', () => {
+describe('opensearch-mapping unit:test', () => {
   it('Mapping for index "masterType" should exist', () => {
     const mapping = OpenSearchMappingService.getInstance().getMappingForIndex('master');
     expect(mapping).not.to.be.undefined;
@@ -180,7 +180,7 @@ describe('es-mapping unit:test', () => {
       require('./resources/wrong-nested.entity');
     } catch (err) {
       expect(err).not.to.be.undefined;
-      expect(err.message).to.eql('es-mapping-error type of a nested field must be an array : WrongNestedEntity:nesteds');
+      expect(err.message).to.eql('opensearch-mapping-error type of a nested field must be an array : WrongNestedEntity:nesteds');
     }
   });
 
@@ -189,7 +189,7 @@ describe('es-mapping unit:test', () => {
       require('./resources/wrong-relation.entity');
     } catch (err) {
       expect(err).not.to.be.undefined;
-      expect(err.message).to.eql('es-mapping-error no relations defined for join datatype : WrongRelationEntity:relations');
+      expect(err.message).to.eql('opensearch-mapping-error no relations defined for join datatype : WrongRelationEntity:relations');
     }
   });
 

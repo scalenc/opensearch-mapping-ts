@@ -133,21 +133,21 @@ export function OpenSearchField(args: OpenSearchFieldArgs): PropertyDecorator {
   return (target: any, propertyKey: string | symbol) => {
     let propertyType = Reflect.getMetadata('design:type', target, propertyKey);
     if (args.type === 'join' && !args.relations) {
-      throw new Error(`es-mapping-error no relations defined for join datatype : ${target.constructor.name}:${propertyKey as string}`);
+      throw new Error(`opensearch-mapping-error no relations defined for join datatype : ${target.constructor.name}:${propertyKey as string}`);
     }
 
     if (args.type === 'nested') {
       if (propertyType.name !== 'Array' && !propertyType.values) {
-        throw new Error(`es-mapping-error type of a nested field must be an array : ${target.constructor.name}:${propertyKey as string}`);
+        throw new Error(`opensearch-mapping-error type of a nested field must be an array : ${target.constructor.name}:${propertyKey as string}`);
       }
       if (!args.fieldClass) {
-        console.warn(`es-mapping-warning no fieldClass defined for nested datatype : ${target.constructor.name}:${propertyKey as string}`);
+        console.warn(`opensearch-mapping-warning no fieldClass defined for nested datatype : ${target.constructor.name}:${propertyKey as string}`);
       }
     }
 
     if (args.type === 'object' && !args.fieldClass) {
       if (propertyType.name === 'Array') {
-        console.warn(`es-mapping-warning no fieldClass defined for object array datatype :
+        console.warn(`opensearch-mapping-warning no fieldClass defined for object array datatype :
         ${target.constructor.name}:${propertyKey as string}`);
       }
     }
