@@ -30,15 +30,28 @@ tag:
   script:
     - npx semantic-release
 
-deploy:
+deploy-to-npm:
   stage: deploy
   only:
     - tags
-  environment:
-    name: npm
-    url: https://www.npmjs.com/package/@scalenc/opensearch-mapping-ts
   before_script:
     - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
+  script:
+    - 'sed -ie "s/\"version\":[ ]*\"[^\"]*\"/\"version\": \"`git describe --tags | tr -d v`\"/g" package.json'
+    - cat <<< $(jq "del(.scripts.prepare)" package.json) > package.json
+    - yarn
+    - yarn publish
+
+deploy-to-gitlab:
+  stage: deploy
+  only:
+    - tags
+  before_script:
+    - |
+      {
+        echo "@${CI_PROJECT_ROOT_NAMESPACE}:registry=${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/npm/"
+        echo "${CI_API_V4_URL#https?}/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=\${CI_JOB_TOKEN}"
+      } | tee --append .npmrc
   script:
     - 'sed -ie "s/\"version\":[ ]*\"[^\"]*\"/\"version\": \"`git describe --tags | tr -d v`\"/g" package.json'
     - cat <<< $(jq "del(.scripts.prepare)" package.json) > package.json
