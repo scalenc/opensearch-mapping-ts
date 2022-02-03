@@ -117,7 +117,7 @@ import { OpenSearchMappingService } from 'opensearch-mapping-ts';
 
 const mappings = OpenSearchMappingService.getInstance().getMappings();
 
-Promise.all(mappings.map(async (mapping) => {
+await Promise.all(mappings.map(async (mapping) => {
     await client.indices.create({ index: mapping.index  });
     await client.indices.putMapping(mapping);
 });
@@ -134,19 +134,19 @@ export class AbstractEntity {
   })
   abstractName: string;
 
-  @OpenSearchField({ type: 'text' })
-  overridableName: string;
+  @OpenSearchField({ type: 'float' })
+  overridableNumber: number;
 }
 ```
 
 ```typescript
-@OpenSearchEntity({ index: 'actual', type: 'typeActual' })
-export class ActualEntity extends AbstractEntity {
+@OpenSearchEntity({ index: 'concrete' })
+export class ConcreteEntity extends AbstractEntity {
   @OpenSearchField({ type: 'text' })
-  actualName: string;
+  concreteName: string;
 
-  @OpenSearchField({ type: 'souble', null_value: 1 })
-  overridableNumber: string;
+  @OpenSearchField({ type: 'double', null_value: 1 })
+  overridableNumber: number;
 }
 ```
 
@@ -210,7 +210,6 @@ export class BaseMixin {
 | Param    | Type       | Description                                                               |
 | -------- | ---------- | ------------------------------------------------------------------------- |
 | index    | string     | Allow you to define the index name                                        |
-| type     | string     | Allow you to define the index type                                        |
 | readonly | boolean    | Define if the mapping must be uploaded when using uploadMappings function |
 | mixins   | Array<any> | Allow you to compose with one or more EsEntities, see "Using mixins"      |
 
@@ -240,13 +239,13 @@ Additional properties are allowed, allowing you to manage other elasticsearch pr
 yarn build
 
 # unit tests only
-npm test:unit
+yarn test:unit
 
 # integration tests only
-npm test:integration
+yarn test:integration
 
 #  starting an OpenSearch instance within a container and running all tests
-npm test:local
+yarn test:local
 
 ```
 

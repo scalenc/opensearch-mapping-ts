@@ -1,6 +1,6 @@
 {
   "name": "opensearch-mapping-ts",
-  "version": "1.0.0",
+  "version": "0.0.0-development",
   "description": "Generate OpenSearch mappings from typescript decorators",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -49,6 +49,7 @@
   "keywords": [
     "typescript",
     "opensearch",
+    "elasticsearch",
     "mapping",
     "decorator"
   ],

@@ -9,7 +9,7 @@ import { SearchClient } from './SearchClient';
 export class OpenSearchMappingService {
   private static instance: OpenSearchMappingService;
 
-  mappings: Map<string, InternalOpenSearchMapping> = new Map();
+  private mappings: Map<string, InternalOpenSearchMapping> = new Map();
 
   /**
    * Get the singleton instance
