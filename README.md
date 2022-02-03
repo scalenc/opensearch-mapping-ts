@@ -26,6 +26,8 @@ This package depends on **@opensearch-project/opensearch**
 - OpenSearch v1
 - Elasticsearch v7
 
+The library does not have any (peer-) dependency to the clients of Elasticsearch (https://github.com/elastic/elasticsearch-js) or OpenSearch (https://github.com/opensearch-project/opensearch-js). However, as these share the same interface, the library can be used with both of them.
+
 ### Migration
 
 For compatibility reasons, there are aliases for all entities that allow using the Elasticsearch flavoured decorators,
