@@ -1,38 +1,19 @@
 {
   "compilerOptions": {
-    "target": "es6",
-    "module": "commonjs",
-    "lib": [
-      "es2016",
-      "dom"
-    ],
-    "declaration": true,
-    "outDir": "dist",
-    "strict": true,
-    "noImplicitAny": false,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noUnusedParameters": true,
-    "noUnusedLocals": true,
-    "noLib": false,
     "allowSyntheticDefaultImports": true,
-    "strictNullChecks": false,
+    "esModuleInterop": true,
+    "lib": ["ES2020"],
+    "declaration": true,
+    "module": "commonjs",
     "moduleResolution": "node",
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "outDir": "dist",
+    "sourceMap": true,
+    "target": "ES2020",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "types": [
-      "node",  "jest"
-    ],
-    "typeRoots": [
-      "./src/types",
-      "node_modules/@types"
-    ],
+    "resolveJsonModule": true
   },
-  "exclude": [
-    "node_modules",
-    "src/**/*.spec.ts"
-  ],
-  "include": [
-    "src/lib/es-mapping-ts/**/*.ts"
-  ]
+  "include": ["src", "tests"]
 }

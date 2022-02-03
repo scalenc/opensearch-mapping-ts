@@ -1,0 +1,59 @@
+default:
+  image: node:14
+
+stages:
+  - test
+  - tag
+  - deploy
+
+run-tests:
+  stage: test
+  except:
+    - tags
+  services:
+    - name: 'docker.elastic.co/elasticsearch/elasticsearch:7.12.0'
+      alias: 'elasticsearch'
+      command: ['bin/elasticsearch', '-Expack.security.enabled=false', '-Ediscovery.type=single-node']
+    - name: 'opensearchproject/opensearch:1.2.4'
+      alias: 'opensearch'
+      command: ['bin/opensearch', '-Eplugins.security.disabled=true', '-Ediscovery.type=single-node']
+  script:
+    - yarn
+    - yarn lint
+    - yarn build
+    - SEARCH_ENDPOINT='http://opensearch:9200' yarn test && SEARCH_ENDPOINT='http://elasticsearch:9200' yarn test
+
+tag:
+  stage: tag
+  only:
+    - master
+  script:
+    - npx semantic-release
+
+deploy-to-npm:
+  stage: deploy
+  only:
+    - tags
+  before_script:
+    - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
+  script:
+    - 'sed -ie "s/\"version\":[ ]*\"[^\"]*\"/\"version\": \"`git describe --tags | tr -d v`\"/g" package.json'
+    - cat <<< $(jq "del(.scripts.prepare)" package.json) > package.json
+    - yarn
+    - yarn publish
+
+deploy-to-gitlab:
+  stage: deploy
+  only:
+    - tags
+  before_script:
+    - |
+      {
+        echo "@${CI_PROJECT_ROOT_NAMESPACE}:registry=${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/npm/"
+        echo "${CI_API_V4_URL#https?}/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=\${CI_JOB_TOKEN}"
+      } | tee --append .npmrc
+  script:
+    - 'sed -ie "s/\"version\":[ ]*\"[^\"]*\"/\"version\": \"`git describe --tags | tr -d v`\"/g" package.json'
+    - cat <<< $(jq "del(.scripts.prepare)" package.json) > package.json
+    - yarn
+    - yarn publish
