@@ -1,62 +1,44 @@
-# default:
-#   image: node:14
-#   before_script:
-#     - |
-#       {
-#         echo "//gitlab.com/api/v4/packages/npm/:_authToken=\${CI_JOB_TOKEN}"
-#         echo "//gitlab.com/api/v4/projects/:_authToken=\${CI_JOB_TOKEN}"
-#       } | tee -a .npmrc
-#     - cat .npmrc
+default:
+  image: node:14
 
-# stages:
-#   - test
-#   - tag
-#   - deploy-dev
-#   - deploy-prod
+stages:
+  - test
+  - tag
+  # - deploy
 
-# run-tests:
-#   stage: test
-#   except:
-#     - tags
-#   script:
-#     - yarn
-#     - yarn lint
-#     - yarn build
-#     - yarn coverage # includes yarn test
+run-tests:
+  stage: test
+  except:
+    - tags
+  services:
+    - name: 'docker.elastic.co/elasticsearch/elasticsearch:7.12.0'
+      alias: 'elasticsearch'
+      command: ['bin/elasticsearch', '-Expack.security.enabled=false', '-Ediscovery.type=single-node']
+    - name: 'docker.elastic.co/opensearchproject/opensearch:1.2.4'
+      alias: 'opensearch'
+      command: ['bin/opensearch', '-Eplugins.security.disabled=true', '-Ediscovery.type=single-node']
+  script:
+    - yarn
+    - yarn lint
+    - yarn build
+    - SEARCH_ENDPOINT='opensearch:9200' yarn test && SEARCH_ENDPOINT='elasticsearch:9200' yarn test
 
-# tag:
-#   stage: tag
-#   only:
-#     - master
-#   script:
-#     - npx semantic-release
-
-# deploy_to_dev:
-#   stage: deploy-dev
+tag:
+  stage: tag
+  only:
+    - master
+  script:
+    - npx semantic-release
+# deploy:
+#   stage: deploy
 #   only:
 #     - tags
 #   environment:
-#     name: dev
-#     url: https://api.dev.scalenc.com
+#     name: npm
+#     url: https://www.npmjs.com/package/@scalenc/opensearch-mapping-ts
 #   script:
 #     - 'sed -ie "s/\"version\":[ ]*\"[^\"]*\"/\"version\": \"`git describe --tags | tr -d v`\"/g" package.json'
 #     - yarn global add serverless@2.34 --no-progress
 #     - yarn
-#     - yarn run sync:tf
 #     - yarn run deploy --stage dev --verbose
 
-# deploy_to_prod:
-#   stage: deploy-prod
-#   only:
-#     - tags
-#   when: manual
-#   environment:
-#     name: prod
-#     url: https://api.app.scalenc.com
-#   script:
-#     - 'sed -ie "s/\"version\":[ ]*\"[^\"]*\"/\"version\": \"`git describe --tags | tr -d v`\"/g" package.json'
-#     - yarn global add serverless@2.34 --no-progress
-#     - yarn
-#     - yarn run sync:tf-prod
-#     - yarn run deploy --stage prod --verbose
-#   allow_failure: false
