@@ -38,7 +38,7 @@ deploy-to-npm:
     - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
   script:
     - 'sed -ie "s/\"version\":[ ]*\"[^\"]*\"/\"version\": \"`git describe --tags | tr -d v`\"/g" package.json'
-    - cat <<< $(jq "del(.scripts.prepare)" package.json) > package.json
+    - 'sed -i "/^[ ]*\"prepare\": \".*\",$/d" package.json'
     - yarn
     - yarn publish
 
@@ -54,6 +54,6 @@ deploy-to-gitlab:
       } | tee --append .npmrc
   script:
     - 'sed -ie "s/\"version\":[ ]*\"[^\"]*\"/\"version\": \"`git describe --tags | tr -d v`\"/g" package.json'
-    - cat <<< $(jq "del(.scripts.prepare)" package.json) > package.json
+    - 'sed -i "/^[ ]*\"prepare\": \".*\",$/d" package.json'
     - yarn
     - yarn publish
