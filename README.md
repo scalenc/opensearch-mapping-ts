@@ -1,7 +1,7 @@
 # OpenSearch Mappings TS
 
-[![GitHub version](https://img.shields.io/badge/licence-MIT-green.svg)](https://github.com/scalenc/opensearch-mapping-ts)
-[![GitHub version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/scalenc/opensearch-mapping-ts)
+[![License](https://img.shields.io/badge/licence-MIT-green.svg)](https://github.com/scalenc/opensearch-mapping-ts)
+[![NPM version](https://img.shields.io/npm/v/@scalenc/opensearch-mapping-ts)](https://www.npmjs.com/package/@scalenc/opensearch-mapping-ts)
 
 This library is used to generate mappings for [OpenSearch](https://opensearch.org/) from typescript decorators. It is based on and forked from [es-mappings-ts](https://github.com/xrobert35/opensearch-mapping-ts), thanks and all credit to the authors.
 
