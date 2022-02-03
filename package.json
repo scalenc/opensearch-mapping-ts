@@ -8,21 +8,23 @@
     "prepare": "husky install",
     "lint": "eslint .",
     "build": "tsc",
-    "test": "mocha",
-    "test:local": "DOCKER=$(which docker || which podman)  && ($DOCKER stop identity-opensearch; $DOCKER rm identity-opensearch; $DOCKER run --name identity-opensearch -p 9242:9200 -e discovery.type=single-node -e plugins.security.disabled=true -d opensearchproject/opensearch:1.2.4 && mocha)",
+    "start-local-os": "DOCKER=$(which docker || which podman)  && ($DOCKER stop opensearch-mapping-ts-opensearch; $DOCKER rm opensearch-mapping-ts-opensearch; $DOCKER run --name opensearch-mapping-ts-opensearch -p 9201:9200 -e discovery.type=single-node -e plugins.security.disabled=true -d opensearchproject/opensearch:1.2.4)",
+    "start-local-es": "DOCKER=$(which docker || which podman) && ($DOCKER stop opensearch-mapping-ts-elasticsearch; $DOCKER rm opensearch-mapping-ts-elasticsearch; $DOCKER run --name opensearch-mapping-ts-elasticsearch -p 9202:9200 -e discovery.type=single-node -d docker.elastic.co/elasticsearch/elasticsearch:7.10.1)",
+    "test:local:os": "yarn start-local-os && SEARCH_ENDPOINT=http://localhost:9201 mocha",
+    "test:local:es": "yarn start-local-es && SEARCH_ENDPOINT=http://localhost:9202 mocha",
+    "test:local": "yarn test:local:os && yarn test:local:es",
     "test:unit": "mocha --exclude 'tests/integration/**/*.test.ts'",
     "test:integration": "mocha --include 'tests/integration/**/*.test.ts'",
+    "test": "mocha",
     "coverage": "nyc --reporter lcov --reporter text yarn test"
   },
   "dependencies": {
     "lodash.clonedeep": "^4.5.0",
     "reflect-metadata": "^0.1.13"
   },
-  "peerDependencies": {
-    "@opensearch-project/opensearch": "^1.0.2"
-  },
   "devDependencies": {
-    "@opensearch-project/opensearch": "^1.0.2",
+    "@elastic/elasticsearch": "7.12.0",
+    "@opensearch-project/opensearch": "^1",
     "@types/chai": "^4.3.0",
     "@types/lodash.clonedeep": "^4.5.6",
     "@types/mocha": "^9.1.0",
@@ -32,9 +34,9 @@
     "@typescript-eslint/parser": "^5.9.0",
     "chai": "^4.3.6",
     "commitlint": "^16.1.0",
+    "eslint": "^8.7.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
-    "eslint": "^8.7.0",
     "husky": "^7.0.4",
     "lint-staged": "^12.3.2",
     "mocha": "^9.2.0",

@@ -1,7 +1,7 @@
-import { Client } from '@opensearch-project/opensearch';
 import { OpenSearchEntityArgs } from './entity.decorator';
 import { OpenSearchFieldArgs } from './field.decorator';
 import { OpenSearchMapping, OpenSearchMappingProperty, InternalOpenSearchMapping, InternalOpenSearchMappingProperty } from './mapping';
+import { SearchClient } from './SearchClient';
 
 /**
  * Service used to manage mapping loading and share it
@@ -167,7 +167,7 @@ export class OpenSearchMappingService {
   /**
    * Allow to insert/update mapping into elasticsearch
    */
-  public async uploadMappings(client: Client) {
+  public async uploadMappings(client: SearchClient) {
     const mappings = OpenSearchMappingService.getInstance().getMappings();
 
     await Promise.all(
@@ -184,7 +184,6 @@ export class OpenSearchMappingService {
               // create index
               await client.indices.create({ index: openSearchMapping.index });
               // create mapping
-              console.log('putting mapping', openSearchMapping.index, openSearchMapping);
               await client.indices.putMapping(openSearchMapping);
             } else {
               // update mapping
