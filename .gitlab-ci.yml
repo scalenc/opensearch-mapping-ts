@@ -21,7 +21,7 @@ run-tests:
     - yarn
     - yarn lint
     - yarn build
-    - SEARCH_ENDPOINT='opensearch:9200' yarn test && SEARCH_ENDPOINT='elasticsearch:9200' yarn test
+    - SEARCH_ENDPOINT='http://opensearch:9200' yarn test && SEARCH_ENDPOINT='http://elasticsearch:9200' yarn test
 
 tag:
   stage: tag
