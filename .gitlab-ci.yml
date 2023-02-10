@@ -1,5 +1,5 @@
 default:
-  image: node:14
+  image: node:18
 
 stages:
   - test
@@ -28,7 +28,7 @@ tag:
   only:
     - master
   script:
-    - npx semantic-release --repository-url `git remote get-url origin`
+    - npx semantic-release@19 --repository-url `git remote get-url origin`
 
 deploy-to-npm:
   stage: deploy
